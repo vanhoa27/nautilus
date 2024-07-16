@@ -55,7 +55,7 @@ public:
 	explicit CallableFunction(std::function<R(val<FunctionArguments>...)> func) : func(func), executable(nullptr) {
 	}
 
-	explicit CallableFunction(std::unique_ptr<compiler::Executable>& executable) : func(), executable(std::move(executable)) {
+	explicit CallableFunction(std::function<void(val<signed char*>, val<signed char*>, val<signed char*>)> executable) : func(), executable(std::move(executable)) {
 	}
 
 	auto operator()(FunctionArguments... args)

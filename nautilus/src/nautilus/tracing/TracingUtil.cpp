@@ -1,7 +1,7 @@
 
 #include "TraceContext.hpp"
 #include "nautilus/common/traceing.hpp"
-#include "nautilus/logging.hpp"
+//#include "nautilus/logging.hpp"
 #include <cxxabi.h>
 #include <dlfcn.h>
 #include <iostream>

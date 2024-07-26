@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22.1)
 include(CMakeDependentOption)
 
-option(ENABLE_LOGGING "Enable logging support" ON)
-option(ENABLE_STACKTRACE "Enable stacktrace support" ON)
-option(ENABLE_TESTS "Enable tests" ON)
+option(ENABLE_LOGGING "Enable logging support" OFF)
+option(ENABLE_STACKTRACE "Enable stacktrace support" OFF)
+option(ENABLE_TESTS "Enable tests" OFF)
 option(ENABLE_COMPILER "Enables tracing and backend compilers" ON)
 option(USE_EXTERNAL_SPDLOG "Use a externally provided version of spdlog" OFF)
 option(USE_EXTERNAL_MLIR "Use a externally provided version of MLIR" OFF)

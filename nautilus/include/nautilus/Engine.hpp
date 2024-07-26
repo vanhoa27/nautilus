@@ -52,8 +52,7 @@ std::function<void()> createFunctionWrapper(std::function<R(FunctionArguments...
 template <typename R, typename... FunctionArguments>
 class CallableFunction {
 public:
-	explicit CallableFunction(std::function<R(val<FunctionArguments>...)> func) : func(func), executable(nullptr) {
-	}
+	explicit CallableFunction(std::function<R(val<FunctionArguments>...)> func) : func(func), executable(nullptr) {	}
 
 	explicit CallableFunction(std::unique_ptr<compiler::Executable>& executable) : func(), executable(std::move(executable)) {
 	}

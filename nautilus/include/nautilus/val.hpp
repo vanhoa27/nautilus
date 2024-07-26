@@ -407,7 +407,6 @@ LHS inline getRawValue(const val<LHS>& val) {
 	return val.value;
 }
 
-
 } // namespace details
 
 #define DEFINE_BINARY_OPERATOR(OP, FUNC)                                                                                                                                                                                                       \

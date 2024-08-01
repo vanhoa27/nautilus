@@ -84,10 +84,10 @@ if (ENABLE_STACKTRACE)
 endif ()
 
 
-if (ENABLE_BC_BACKEND)
-    add_subdirectory(${THIRD_PARTY_DIR}/dyncall)
-    list(APPEND EXPORT_TARGETS dyncall_s)
-endif ()
+#if (ENABLE_BC_BACKEND)
+#    add_subdirectory(${THIRD_PARTY_DIR}/dyncall)
+#    list(APPEND EXPORT_TARGETS dyncall_s)
+#endif ()
 
 if (ENABLE_ASMJIT_BACKEND)
     set(ASMJIT_STATIC ON)

@@ -15,7 +15,14 @@ namespace nautilus {
 
 namespace details {
 template <typename LHS>
-LHS getRawValue(const val<LHS>& val);
+LHS getRawValue(const val<LHS>& val) {
+	return val.value;
+}
+
+template <typename LHS>
+LHS inline getRawValue(const val<LHS>& val) {
+	return val.value;
+}
 
 #define COMMON_RETURN_TYPE val<typename std::common_type<typename LHS::basic_type, typename RHS::basic_type>::type>
 

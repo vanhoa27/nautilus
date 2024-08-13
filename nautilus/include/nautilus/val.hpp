@@ -167,6 +167,12 @@ public:
 		*this = *this - (ValueType) 1;
 		return temp;
 	}
+
+
+	[[nodiscard]] std::string toString() const {
+		return std::to_string(value);
+	}
+
 #ifdef ENABLE_TRACING
 	const tracing::TypedValueRefHolder state;
 #endif
@@ -280,7 +286,7 @@ public:
 		return value;
 	}
 
-	std::string toString() const {
+	[[nodiscard]] std::string toString() const {
 		return std::to_string(value);
 	}
 

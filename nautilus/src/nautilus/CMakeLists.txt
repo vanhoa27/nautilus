@@ -1,12 +1,8 @@
 
 add_subdirectory(common)
 add_subdirectory(exceptions)
-if (ENABLE_TRACING)
-    add_subdirectory(tracing)
-endif ()
+add_subdirectory(tracing)
 add_subdirectory(compiler)
 add_subdirectory(api)
 
-#if (ENABLE_LOGGING)
-#    add_source_files(nautilus logging.cpp)
-#endif ()
+add_source_files(nautilus logging.cpp)

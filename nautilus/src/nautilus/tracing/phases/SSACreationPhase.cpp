@@ -46,33 +46,6 @@ Block& SSACreationPhase::SSACreationPhaseContext::getReturnBlock() {
 	//  return trace->getBlock(bl);
 }
 
-bool existsAnyPathFromBlockToResultRef(const Block& block, const value_ref& ref, const std::vector<Block>& allBlocks, std::vector<uint16_t>& alreadyVisitedBlocks) {
-	std::cout << "Checking if there exists any path from block " << block.blockId << " to the block that gets ref "  << ref.ref << " assigned!" << std::endl;
-	alreadyVisitedBlocks.emplace_back(block.blockId);
-
-	for (const auto& operation : block.operations) {
-		if (operation.resultRef == ref) {
-			return true;
-		}
-	}
-
-	// We are building successors by iterating through all blocks and checking if the current block is a predecessor of the block.
-	// This is really dumb and should not be done like this.
-	std::vector<Block> allSuccessors;
-	for (const auto& tmpBlock : allBlocks) {
-		if (std::ranges::find(alreadyVisitedBlocks, tmpBlock.blockId) != alreadyVisitedBlocks.end()) {
-			continue;
-		}
-
-		if (std::ranges::find(tmpBlock.predecessors, block.blockId) != tmpBlock.predecessors.end()) {
-			allSuccessors.emplace_back(tmpBlock);
-		}
-	}
-
-	// If the current block is a control flow merge block, we have to check all successors.
-	return std::ranges::any_of(allSuccessors, [&](const auto& successor) { return existsAnyPathFromBlockToResultRef(successor, ref, allBlocks, alreadyVisitedBlocks); });
-}
-
 std::shared_ptr<ExecutionTrace> SSACreationPhase::SSACreationPhaseContext::process() {
 	auto rootBlockNumberOfArguments = trace->getArguments().size();
 	//  In the first step we get the return block, which contains the return call.
@@ -87,34 +60,6 @@ std::shared_ptr<ExecutionTrace> SSACreationPhase::SSACreationPhaseContext::proce
 	// Finally we make all block arguments unique to their local block.
 	// As a result two blocks, can't use the same value references.
 	makeBlockArgumentsUnique();
-
-
-	// We have to remove arguments from all blocks if the current block is not on any path from the block that defines the variable to the block that uses it.
-	for (auto& block : trace->getBlocks()) {
-		std::cout << "Checking if block with block id " << block.blockId << " can get rid of its arguments" << std::endl;
-		std::vector<uint16_t> alreadyVisitedBlocks;
-		std::erase_if(block.arguments, [&](const auto& arg) {
-			if (block.blockId == 0 && (arg.ref == 0 || arg.ref == 1 || arg.ref == 2 || arg.ref == 3)) {
-				return false;
-			}
-			if (existsAnyPathFromBlockToResultRef(block, arg, trace->getBlocks(), alreadyVisitedBlocks)) {
-				std::cout << "Block with block id " << block.blockId << " CAN get rid of argument " << arg.ref << std::endl;
-				return true;
-			} else {
-				std::cout << "Block with block id " << block.blockId << " can NOT get rid of argument " << arg.ref << std::endl;
-				return false;
-			}
-		});
-	}
-
-	std::cout << "Block arguments are: " << std::endl;
-	for (const auto& block : trace->getBlocks()) {
-		std::cout << "Block with id " << block.blockId << " has the following arguments: " ;
-		for (const auto& arg : block.arguments) {
-			std::cout << arg.ref << " ";
-		}
-		std::cout << std::endl;
-	}
 
 	// check arguments
 	if (rootBlockNumberOfArguments != trace->getBlocks().front().arguments.size()) {

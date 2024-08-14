@@ -36,12 +36,10 @@ set_target_properties(nautilus PROPERTIES
 #    target_link_libraries(nautilus PRIVATE spdlog::spdlog)
 #endif ()
 
-message(STATUS "ENABLE_TRACING: ${ENABLE_TRACING}")
-
-#if (ENABLE_STACKTRACE)
-#    # Add Backward to your target (either Backward::Interface, Backward::Object, or Backward::Backward)
-#    target_link_libraries(nautilus PRIVATE Backward::Interface)
-#endif ()
+if (ENABLE_STACKTRACE)
+    # Add Backward to your target (either Backward::Interface, Backward::Object, or Backward::Backward)
+    target_link_libraries(nautilus PRIVATE Backward::Interface)
+endif ()
 
 if (ENABLE_TESTS)
     enable_testing()

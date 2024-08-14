@@ -15,14 +15,10 @@ namespace nautilus {
 
 namespace details {
 template <typename LHS>
-LHS getRawValue(const val<LHS>& val) {
-	return val.value;
-}
+LHS getRawValue(const val<LHS>& val);
 
 template <typename LHS>
-LHS inline getRawValue(const val<LHS>& val) {
-	return val.value;
-}
+LHS getRawValue(const val<LHS>& val);
 
 #define COMMON_RETURN_TYPE val<typename std::common_type<typename LHS::basic_type, typename RHS::basic_type>::type>
 
@@ -167,7 +163,6 @@ public:
 		*this = *this - (ValueType) 1;
 		return temp;
 	}
-
 
 	[[nodiscard]] std::string toString() const {
 		return std::to_string(value);

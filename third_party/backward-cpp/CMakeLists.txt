@@ -113,9 +113,7 @@ endif()
 add_library(backward ${libtype} backward.cpp)
 set_target_properties(backward PROPERTIES EXPORT_NAME Backward)
 target_link_libraries(backward PUBLIC Backward::Interface)
-if (NOT TARGET Backward::Backward)
-	add_library(Backward::Backward ALIAS backward)
-endif ()
+add_library(Backward::Backward ALIAS backward)
 
 ###############################################################################
 # TESTS

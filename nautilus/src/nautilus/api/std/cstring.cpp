@@ -23,14 +23,9 @@ val<char*> strcat(val<char*> s1, const val<char*> s2) {
 val<char*> strncat(val<char*> s1, const val<char*> s2, val<size_t> n) {
 	return invoke<>(+[](char* s1, const char* s2, size_t n) { return std::strncat(s1, s2, n); }, s1, s2, n);
 }
-
-int memcmpProxy(const void* s1, const void* s2, size_t n) {
-	return std::memcmp(s1, s2, n);
-}
-
 val<int> memcmp(val<void*> s1, val<void*> s2, val<size_t> n) {
-//	return invoke(memcmpProxy, s1, s2, n);
-	return invoke<>(+[](void* s1, void* s2, size_t n) { return std::memcmp(s1, s2, n); }, s1, s2, n);
+	return invoke<>(
+	    +[](void* s1, void* s2, size_t n) { return std::memcmp(s1, s2, n); }, s1, s2, n);
 }
 val<int> strcmp(val<const char*> s1, val<const char*> s2) {
 	return invoke<>(+[](const char* s1, const char* s2) { return std::strcmp(s1, s2); }, s1, s2);

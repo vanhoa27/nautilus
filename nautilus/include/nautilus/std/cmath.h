@@ -158,7 +158,6 @@ val<float> expm1f(val<float> num);
  */
 val<float> log(val<float> x);
 val<double> log(val<double> x);
-val<float> logf(val<float> x);
 
 /**
  * @brief Computes the base-10 logarithm of x.

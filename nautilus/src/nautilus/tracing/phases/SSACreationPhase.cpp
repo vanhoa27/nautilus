@@ -89,30 +89,30 @@ std::shared_ptr<ExecutionTrace> SSACreationPhase::SSACreationPhaseContext::proce
 	makeBlockArgumentsUnique();
 
 	// We have to remove arguments from all blocks if the current block is not on any path from the block that defines the variable to the block that uses it.
-	for (auto& block : trace->getBlocks()) {
-		std::cout << "Checking if block with block id " << block.blockId << " can get rid of its arguments" << std::endl;
-		std::vector<uint16_t> alreadyVisitedBlocks;
-		std::erase_if(block.arguments, [&](const auto& arg) {
-			if (block.blockId == 0 && (arg.ref == 0 || arg.ref == 1 || arg.ref == 2 || arg.ref == 3)) {
-				return false;
-			}
-			if (!existsAnyPathFromBlockToResultRef(block, arg, trace->getBlocks(), alreadyVisitedBlocks)) {
-				std::cout << "Block with block id " << block.blockId << " can NOT get rid of argument " << arg.ref << std::endl;
-				return false;
-			}
-			std::cout << "Block with block id " << block.blockId << " CAN get rid of argument " << arg.ref << std::endl;
-			return true;
-		});
-	}
-
-	std::cout << "Block arguments are: " << std::endl;
-	for (const auto& block : trace->getBlocks()) {
-		std::cout << "Block with id " << block.blockId << " has the following arguments: ";
-		for (const auto& arg : block.arguments) {
-			std::cout << arg.ref << " ";
-		}
-		std::cout << std::endl;
-	}
+	// for (auto& block : trace->getBlocks()) {
+	// 	std::cout << "Checking if block with block id " << block.blockId << " can get rid of its arguments" << std::endl;
+	// 	std::vector<uint16_t> alreadyVisitedBlocks;
+	// 	std::erase_if(block.arguments, [&](const auto& arg) {
+	// 		if (block.blockId == 0 && (arg.ref == 0 || arg.ref == 1 || arg.ref == 2 || arg.ref == 3)) {
+	// 			return false;
+	// 		}
+	// 		if (!existsAnyPathFromBlockToResultRef(block, arg, trace->getBlocks(), alreadyVisitedBlocks)) {
+	// 			std::cout << "Block with block id " << block.blockId << " can NOT get rid of argument " << arg.ref << std::endl;
+	// 			return false;
+	// 		}
+	// 		std::cout << "Block with block id " << block.blockId << " CAN get rid of argument " << arg.ref << std::endl;
+	// 		return true;
+	// 	});
+	// }
+	//
+	// std::cout << "Block arguments are: " << std::endl;
+	// for (const auto& block : trace->getBlocks()) {
+	// 	std::cout << "Block with id " << block.blockId << " has the following arguments: ";
+	// 	for (const auto& arg : block.arguments) {
+	// 		std::cout << arg.ref << " ";
+	// 	}
+	// 	std::cout << std::endl;
+	// }
 
 	// check arguments
 	if (rootBlockNumberOfArguments != trace->getBlocks().front().arguments.size()) {
@@ -128,6 +128,8 @@ std::shared_ptr<ExecutionTrace> SSACreationPhase::SSACreationPhaseContext::proce
 		for (const auto& arg : trace->getBlocks().front().arguments) {
 			ss << arg.ref << " ";
 		}
+		ss << std::endl;
+		ss << "Trace: " << trace->toString();
 		ss << std::endl;
 		throw RuntimeException(ss.str());
 	}
@@ -343,7 +345,8 @@ void SSACreationPhase::SSACreationPhaseContext::makeBlockArgumentsUnique() {
 		//}
 
 		// set the new ValRefs to all depending on operations.
-		for (auto& operation : block.operations) {
+		for (uint64_t i = 0; i < block.operations.size(); i++) {
+			auto& operation = block.operations[i];
 			for (auto& input : operation.input) {
 				if (auto* valueRef = std::get_if<value_ref>(&input)) {
 					auto foundAssignment = blockArgumentMap.find(valueRef->ref);

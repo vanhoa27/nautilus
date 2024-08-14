@@ -225,6 +225,21 @@ val<ValueType> inline operator+(val<ValueType> left, IndexType offset) {
 	return val<ValueType>(newPtr);
 }
 
+template <is_arithmetic_ptr ValueType, typename IndexType>
+val<ValueType> inline operator-(val<ValueType> left, IndexType offset) {
+	auto offsetValue = make_value(offset);
+	auto size = ((typename IndexType::raw_type)(sizeof(typename std::remove_pointer_t<ValueType>)));
+	auto offsetBytes = offsetValue * size;
+#ifdef ENABLE_TRACING
+	if (tracing::inTracer()) {
+		auto tc = tracing::traceBinaryOp<tracing::SUB, ValueType>(left.state, offsetBytes.state);
+		return val<ValueType>(tc);
+	}
+#endif
+	auto newPtr = (ValueType) (((uint8_t*) left.value) - details::getRawValue(offsetBytes));
+	return val<ValueType>(newPtr);
+}
+
 template <is_ptr ValueType, is_integral IndexType>
 val<ValueType> inline operator+(val<ValueType>& left, IndexType offset) {
 	return left + val<size_t>(offset);

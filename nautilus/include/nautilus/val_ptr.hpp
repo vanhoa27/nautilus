@@ -145,6 +145,17 @@ public:
 #endif
 	}
 
+	template <class T>
+	val<ValType&> operator[](T&& io) const {
+		auto indexOffset = static_cast<val<const int32_t>>(io);
+		auto valuePtr = (*this) + indexOffset;
+#ifdef ENABLE_TRACING
+		return val<ValType&>(valuePtr, this->state);
+#else
+		return val<ValType&>(valuePtr);
+#endif
+	}
+
 	template <typename OtherType>
 	    requires std::is_pointer_v<OtherType>
 	operator val<OtherType>() const {

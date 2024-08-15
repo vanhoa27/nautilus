@@ -294,8 +294,6 @@ std::unique_ptr<ExecutionTrace> TraceContext::trace(std::function<void()>& trace
 			traceIteration = traceIteration + 1;
 			//			log::trace("Trace Iteration {}", traceIteration);
 			//			log::trace("{}", tc->executionTrace->toString());
-			std::cout << "Trace Iteration " << traceIteration << std::endl;
-			std::cout << tc->executionTrace->toString() << std::endl;
 			tc->symbolicExecutionContext->next();
 			tc->executionTrace->resetExecution();
 			TraceContext::get()->resume();
@@ -307,8 +305,6 @@ std::unique_ptr<ExecutionTrace> TraceContext::trace(std::function<void()>& trace
 	terminate();
 	//	log::debug("Tracing Terminated with {} iterations", traceIteration);
 	//	log::trace("Final trace: {}", trace->toString());
-	std::cout << "Tracing Terminated with " << traceIteration << " iterations!" << std::endl;
-	std::cout << "Final trace: " << trace->toString() << std::endl;
 
 	return trace;
 }

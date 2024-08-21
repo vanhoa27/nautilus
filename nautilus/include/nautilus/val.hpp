@@ -100,7 +100,7 @@ public:
 	// copy constructor
 	val(const val<ValueType>& other) : state(tracing::traceCopy(other.state)), value(other.value) {}
 	// move constructor
-	val(const val<ValueType>&& other) noexcept : state(std::move(other.state)), value(other.value) {}
+	val(val<ValueType>&& other) noexcept : state(std::move(other.state)), value(other.value) {}
 	val(tracing::value_ref& tc) : state(tc), value() {}
 #else
 	val() {}
@@ -363,7 +363,7 @@ namespace details {
 		typedef typename std::common_type<typename LHS::basic_type, typename RHS::basic_type>::type commonType;                                                                                                                                \
 		auto&& lValue = cast_value<LHS, commonType>(std::forward<LHS>(left));                                                                                                                                                                  \
 		auto&& rValue = cast_value<RHS, commonType>(std::forward<RHS>(right));                                                                                                                                                                 \
-		using resultType = decltype(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                                  \
+		using resultType = decltype(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                               \
 		if SHOULD_TRACE () {                                                                                                                                                                                                                   \
 			auto tc = tracing::traceBinaryOp<tracing::OP_TRACE, resultType>(details::getState(lValue), details::getState(rValue));                                                                                                             \
 			return RES_TYPE(tc);                                                                                                                                                                                                               \
@@ -423,7 +423,9 @@ LHS inline getRawValue(const val<LHS>& val) {
 
 #define DEFINE_BINARY_OPERATOR(OP, FUNC)                                                                                                                                                                                                       \
 	template <typename LHS, typename RHS>                                                                                                                                                                                                      \
-	    requires(is_fundamental_val<LHS> && (is_fundamental_val<RHS> || convertible_to_fundamental<RHS>)) || ((is_fundamental_val<LHS> || convertible_to_fundamental<LHS>) && is_fundamental_val<RHS>)                                         \
+	auto operator OP(val<LHS>&& left, val<RHS>&& right) = delete;                                                                                                                                                                              \
+	template <typename LHS, typename RHS>                                                                                                                                                                                                      \
+	    requires(is_fundamental_val<LHS> && (is_fundamental_val<RHS> || convertible_to_fundamental<RHS>) ) || ((is_fundamental_val<LHS> || convertible_to_fundamental<LHS>) && is_fundamental_val<RHS>)                                        \
 	auto inline operator OP(LHS&& left, RHS&& right) {                                                                                                                                                                                         \
 		auto&& lhsV = make_value(std::forward<LHS>(left));                                                                                                                                                                                     \
 		auto&& rhsV = make_value(std::forward<RHS>(right));                                                                                                                                                                                    \
@@ -528,7 +530,7 @@ auto& operator>>=(val<LHS>& left, RHS right) {
 }
 
 namespace details {
-val<bool> inline lOr(val<bool>& left, val<bool>& right) {
+val<bool> inline lOr(nautilus::val<bool>& left, nautilus::val<bool>& right) {
 #ifdef ENABLE_TRACING
 	if SHOULD_TRACE () {
 		auto tc = tracing::traceBinaryOp<tracing::OR, bool>(left.state, right.state);
@@ -538,7 +540,7 @@ val<bool> inline lOr(val<bool>& left, val<bool>& right) {
 	return left.value || right.value;
 }
 
-val<bool> inline lAnd(val<bool>& left, val<bool>& right) {
+val<bool> inline lAnd(nautilus::val<bool>& left, nautilus::val<bool>& right) {
 #ifdef ENABLE_TRACING
 	if SHOULD_TRACE () {
 		auto tc = tracing::traceBinaryOp<tracing::AND, bool>(left.state, right.state);
@@ -548,7 +550,7 @@ val<bool> inline lAnd(val<bool>& left, val<bool>& right) {
 	return left.value && right.value;
 }
 
-val<bool> inline lNot(val<bool>& arg) {
+val<bool> inline lNot(nautilus::val<bool>& arg) {
 #ifdef ENABLE_TRACING
 	if SHOULD_TRACE () {
 		auto tc = tracing::traceUnaryOp<tracing::NOT, bool>(arg.state);
@@ -559,31 +561,33 @@ val<bool> inline lNot(val<bool>& arg) {
 }
 } // namespace details
 
-auto inline operator||(bool left, val<bool> right) {
-	auto leftVal = make_value(left);
-	return details::lOr(leftVal, right);
-}
-auto inline operator||(val<bool> left, bool right) {
-	auto rightVal = make_value(right);
-	return details::lOr(left, rightVal);
-}
-auto inline operator||(val<bool> left, val<bool> right) {
-	return details::lOr(left, right);
-}
-
-auto inline operator&&(bool left, val<bool> right) {
-	auto leftVal = make_value(left);
-	return details::lAnd(leftVal, right);
-}
-auto inline operator&&(val<bool> left, bool right) {
-	auto rightVal = make_value(right);
-	return details::lAnd(left, rightVal);
-}
-auto inline operator&&(val<bool> left, val<bool> right) {
-	return details::lAnd(left, right);
+template <typename LHS, typename RHS>
+auto inline operator||(val<LHS> left, val<RHS> right) {
+	if constexpr (std::is_same_v<LHS, bool>) {
+		auto leftV = make_value(left);
+		return details::lOr(leftV, right);
+	} else if constexpr (std::is_same_v<RHS, bool>) {
+		auto rightV = make_value(right);
+		return details::lOr(left, rightV);
+	} else {
+		return details::lOr(left, right);
+	}
 }
 
-auto inline operator!(val<bool> left) {
+template <typename LHS, typename RHS>
+auto inline operator&&(val<LHS> left, val<RHS> right) {
+	if constexpr (std::is_same_v<LHS, bool>) {
+		auto leftV = make_value(left);
+		return details::lAnd(leftV, right);
+	} else if constexpr (std::is_same_v<RHS, bool>) {
+		auto rightV = make_value(right);
+		return details::lAnd(left, rightV);
+	} else {
+		return details::lAnd(left, right);
+	}
+}
+
+auto inline operator!(nautilus::val<bool> left) {
 	return details::lNot(left);
 }
 

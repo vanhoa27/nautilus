@@ -360,16 +360,21 @@ namespace details {
 #define DEFINE_BINARY_OPERATOR_HELPER(OP, OP_NAME, OP_TRACE, RES_TYPE)                                                                                                                                                                         \
 	template <typename LHS, typename RHS>                                                                                                                                                                                                      \
 	auto inline OP_NAME(LHS&& left, RHS&& right) {                                                                                                                                                                                             \
-		typedef typename std::common_type<typename LHS::basic_type, typename RHS::basic_type>::type commonType;                                                                                                                                \
-		auto&& lValue = cast_value<LHS, commonType>(std::forward<LHS>(left));                                                                                                                                                                  \
-		auto&& rValue = cast_value<RHS, commonType>(std::forward<RHS>(right));                                                                                                                                                                 \
-		using resultType = decltype(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                               \
-		if SHOULD_TRACE () {                                                                                                                                                                                                                   \
-			auto tc = tracing::traceBinaryOp<tracing::OP_TRACE, resultType>(details::getState(lValue), details::getState(rValue));                                                                                                             \
-			return RES_TYPE(tc);                                                                                                                                                                                                               \
+		if constexpr (!requires(LHS l, RHS r) { getRawValue(l) OP getRawValue(r); }) {                                                                                                                                                                                   \
+			throw std::runtime_error(std::string("binary operator not implemented: ") + " " + #OP + " " + typeid(LHS).name() + " " + typeid(RHS).name());                                                                                      \
+			return left;                                                                                                                                                                                                                \
+		} else {                                                                                                                                                                                                                               \
+			typedef typename std::common_type<typename LHS::basic_type, typename RHS::basic_type>::type commonType;                                                                                                                            \
+			auto&& lValue = cast_value<LHS, commonType>(std::forward<LHS>(left));                                                                                                                                                              \
+			auto&& rValue = cast_value<RHS, commonType>(std::forward<RHS>(right));                                                                                                                                                             \
+			using resultType = decltype(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                           \
+			if SHOULD_TRACE () {                                                                                                                                                                                                               \
+				auto tc = tracing::traceBinaryOp<tracing::OP_TRACE, resultType>(details::getState(lValue), details::getState(rValue));                                                                                                         \
+				return RES_TYPE(tc);                                                                                                                                                                                                           \
+			}                                                                                                                                                                                                                                  \
+			return RES_TYPE(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                                       \
 		}                                                                                                                                                                                                                                      \
-		return RES_TYPE(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                                           \
-	}
+	} // namespace details
 
 DEFINE_BINARY_OPERATOR_HELPER(+, add, ADD, COMMON_RETURN_TYPE)
 
@@ -561,30 +566,28 @@ val<bool> inline lNot(nautilus::val<bool>& arg) {
 }
 } // namespace details
 
-template <typename LHS, typename RHS>
-auto inline operator||(val<LHS> left, val<RHS> right) {
-	if constexpr (std::is_same_v<LHS, bool>) {
-		auto leftV = make_value(left);
-		return details::lOr(leftV, right);
-	} else if constexpr (std::is_same_v<RHS, bool>) {
-		auto rightV = make_value(right);
-		return details::lOr(left, rightV);
-	} else {
-		return details::lOr(left, right);
-	}
+auto inline operator||(bool left, val<bool> right) {
+	auto leftVal = make_value(left);
+	return details::lOr(leftVal, right);
+}
+auto inline operator||(val<bool> left, bool right) {
+	auto rightVal = make_value(right);
+	return details::lOr(left, rightVal);
+}
+auto inline operator||(val<bool> left, val<bool> right) {
+	return details::lOr(left, right);
 }
 
-template <typename LHS, typename RHS>
-auto inline operator&&(val<LHS> left, val<RHS> right) {
-	if constexpr (std::is_same_v<LHS, bool>) {
-		auto leftV = make_value(left);
-		return details::lAnd(leftV, right);
-	} else if constexpr (std::is_same_v<RHS, bool>) {
-		auto rightV = make_value(right);
-		return details::lAnd(left, rightV);
-	} else {
-		return details::lAnd(left, right);
-	}
+auto inline operator&&(bool left, val<bool> right) {
+	auto leftVal = make_value(left);
+	return details::lAnd(leftVal, right);
+}
+auto inline operator&&(val<bool> left, bool right) {
+	auto rightVal = make_value(right);
+	return details::lAnd(left, rightVal);
+}
+auto inline operator&&(val<bool> left, val<bool> right) {
+	return details::lAnd(left, right);
 }
 
 auto inline operator!(nautilus::val<bool> left) {

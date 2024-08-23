@@ -17,6 +17,10 @@ val<int64_t> abs(val<int64_t> x);
 val<float> fabs(val<float> x);
 val<double> fabs(val<double> x);
 val<float> fabsf(val<float> x);
+// template <typename T>
+// val<T> abs(val<T> x) {
+// 	return invoke<>(+[](T x) { return std::abs(x); }, x);
+// }
 
 /**
  * @brief Computes the floating-point remainder of x/y.

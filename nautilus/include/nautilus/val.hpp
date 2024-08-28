@@ -535,7 +535,7 @@ auto& operator>>=(val<LHS>& left, RHS right) {
 }
 
 namespace details {
-val<bool> inline lOr(nautilus::val<bool>& left, nautilus::val<bool>& right) {
+val<bool> inline lOr(val<bool>& left, val<bool>& right) {
 #ifdef ENABLE_TRACING
 	if SHOULD_TRACE () {
 		auto tc = tracing::traceBinaryOp<tracing::OR, bool>(left.state, right.state);
@@ -545,7 +545,7 @@ val<bool> inline lOr(nautilus::val<bool>& left, nautilus::val<bool>& right) {
 	return left.value || right.value;
 }
 
-val<bool> inline lAnd(nautilus::val<bool>& left, nautilus::val<bool>& right) {
+val<bool> inline lAnd(val<bool>& left, val<bool>& right) {
 #ifdef ENABLE_TRACING
 	if SHOULD_TRACE () {
 		auto tc = tracing::traceBinaryOp<tracing::AND, bool>(left.state, right.state);
@@ -555,7 +555,7 @@ val<bool> inline lAnd(nautilus::val<bool>& left, nautilus::val<bool>& right) {
 	return left.value && right.value;
 }
 
-val<bool> inline lNot(nautilus::val<bool>& arg) {
+val<bool> inline lNot(val<bool>& arg) {
 #ifdef ENABLE_TRACING
 	if SHOULD_TRACE () {
 		auto tc = tracing::traceUnaryOp<tracing::NOT, bool>(arg.state);
@@ -590,7 +590,7 @@ auto inline operator&&(val<bool> left, val<bool> right) {
 	return details::lAnd(left, right);
 }
 
-auto inline operator!(nautilus::val<bool> left) {
+auto inline operator!(val<bool> left) {
 	return details::lNot(left);
 }
 

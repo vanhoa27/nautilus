@@ -428,9 +428,7 @@ LHS inline getRawValue(const val<LHS>& val) {
 
 } // namespace details
 
-#define DEFINE_BINARY_OPERATOR(OP, FUNC)                                                                                                                                                                                                       \
-	template <typename LHS, typename RHS>                                                                                                                                                                                                      \
-	auto operator OP(val<LHS>&& left, val<RHS>&& right) = delete;                                                                                                                                                                              \
+#define DEFINE_BINARY_OPERATOR(OP, FUNC)                                                                                                                                                                                                                                                                                                                                                                               \
 	template <typename LHS, typename RHS>                                                                                                                                                                                                      \
 	    requires(is_fundamental_val<LHS> && (is_fundamental_val<RHS> || convertible_to_fundamental<RHS>) ) || ((is_fundamental_val<LHS> || convertible_to_fundamental<LHS>) && is_fundamental_val<RHS>)                                        \
 	auto inline operator OP(LHS&& left, RHS&& right) {                                                                                                                                                                                         \

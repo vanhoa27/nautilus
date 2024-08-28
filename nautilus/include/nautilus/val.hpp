@@ -164,8 +164,9 @@ public:
 		return temp;
 	}
 
-	[[nodiscard]] std::string toString() const {
-		return std::to_string(value);
+	friend std::ostream &operator<<(std::ostream &os, const val<ValueType>& value) {
+		os << value.value;
+		return os;
 	}
 
 #ifdef ENABLE_TRACING
@@ -281,8 +282,9 @@ public:
 		return value;
 	}
 
-	[[nodiscard]] std::string toString() const {
-		return std::to_string(value);
+	friend std::ostream &operator<<(std::ostream &os, const val<bool>& value) {
+		os << value.value;
+		return os;
 	}
 
 	bool value;

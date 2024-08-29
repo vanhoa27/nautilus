@@ -375,8 +375,7 @@ namespace details {
 				return RES_TYPE(tc);                                                                                                                                                                                                           \
 			}                                                                                                                                                                                                                                  \
 			return RES_TYPE(getRawValue(lValue) OP getRawValue(rValue));                                                                                                                                                                       \
-		}                                                                                                                                                                                                                                      \
-	} // namespace details
+	}
 
 DEFINE_BINARY_OPERATOR_HELPER(+, add, ADD, COMMON_RETURN_TYPE)
 

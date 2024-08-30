@@ -81,6 +81,8 @@ if (ENABLE_BC_BACKEND)
     list(APPEND EXPORT_TARGETS dyncall_s)
 endif ()
 
+list(APPEND EXPORT_TARGETS "nautilus_mlir")
+
 if (ENABLE_ASMJIT_BACKEND)
     set(ASMJIT_STATIC ON)
     set(ASMJIT_BUILD_RELEASE ON)

@@ -48,18 +48,31 @@ endif ()
 
 # Handle CMake Install
 include(GNUInstallDirs)
-add_library(${PROJECT_NAME}::nautilus ALIAS nautilus)
-
+set_target_properties(nautilus PROPERTIES DEBUG_POSTFIX "d")
 install(
         TARGETS nautilus ${EXPORT_TARGETS}
-        EXPORT ${PROJECT_NAME}-config
-        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        EXPORT nautilus
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
 )
 
 install(
-        EXPORT ${PROJECT_NAME}-config
-        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
-        NAMESPACE "${PROJECT_NAME}::"
+        EXPORT nautilus
+        FILE nautilusConfigTargets.cmake
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nautilus"
+        NAMESPACE nautilus::
+)
+
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+        ../cmake/nautilusConfig.cmake.in
+        "${CMAKE_CURRENT_BINARY_DIR}/nautilusConfig.cmake"
+        INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nautilus"
+)
+
+install(
+        FILES "${CMAKE_CURRENT_BINARY_DIR}/nautilusConfig.cmake"
+        DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/nautilus"
 )
 
 install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/include/${PROJECT_NAME}/

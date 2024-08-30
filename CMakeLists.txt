@@ -92,7 +92,3 @@ endif ()
 
 add_subdirectory(nautilus)
 add_make_format()
-
-
-
-

@@ -4,6 +4,7 @@ add_executable(nautilus-execution-tests
         ExecutionTest.cpp
         BoolExecutionTest.cpp
         CastExecutionTest.cpp
+        DumpHelperTest.cpp
 )
 
 target_link_libraries(nautilus-execution-tests PUBLIC nautilus Catch2::Catch2WithMain)

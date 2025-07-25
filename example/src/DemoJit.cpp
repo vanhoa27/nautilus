@@ -1,6 +1,5 @@
 #include <nautilus/Engine.hpp>
 #include <nautilus/core.hpp>
-#include <sstream>
 
 using namespace nautilus;
 
@@ -21,12 +20,23 @@ val<int32_t> conditionalSum(val<int32_t> size, val<bool*> mask, val<int32_t*> ar
 int main(int, char* []) {
 	engine::Options options;
 	options.setOption("engine.backend", "cpp");
-	//options.setOption("engine.Compilation", false);
+	// options.setOption("dump.all", true);
+
+	options.setOption("engine.Compilation", false);
 	auto engine = engine::NautilusEngine(options);
 	auto function = engine.registerFunction(conditionalSum);
+
 	auto mask = new bool[4]{true, true, false, true};
 	auto array = new int32_t[4] {1, 2, 3, 4};
+
 	auto result = function(4, mask, array);
 	std::cout << "Result: " << result << std::endl;
+
+	auto mask2 = new bool[result]{true, true, false, true, true, true, false};
+	auto array2 = new int32_t[result] {1, 2, 3, 4, 5, 6, 7};
+
+	auto res2 = function(result, mask2, array2);
+	std::cout << "Dependent Result: " << res2 << std::endl;
+
 	return 0;
 }

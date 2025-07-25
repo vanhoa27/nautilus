@@ -8,7 +8,8 @@ CPPExecutable::CPPExecutable(std::shared_ptr<SharedLibrary> obj) : obj(std::move
 }
 
 void* CPPExecutable::getInvocableFunctionPtr(const std::string&) {
-	return obj->getInvocableFunctionPtr("execute");
+	// return obj->getInvocableFunctionPtr("execute");
+	return obj->getInvocableFunctionPtr("exec2");
 }
 
 bool CPPExecutable::hasInvocableFunctionPtr() {

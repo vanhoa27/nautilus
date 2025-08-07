@@ -17,7 +17,7 @@ val<int32_t> conditionalSum(val<int32_t> size, val<bool*> mask, val<int32_t*> ar
 	return sum;
 }
 
-int main(int, char* []) {
+int main(int, char*[]) {
 	engine::Options options;
 	options.setOption("engine.backend", "cpp");
 	// options.setOption("dump.all", true);

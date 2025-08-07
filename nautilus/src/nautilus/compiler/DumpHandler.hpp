@@ -8,11 +8,13 @@ namespace nautilus::compiler {
 class DumpHandler {
 public:
 	DumpHandler(const engine::Options& options, const CompilationUnitID& id);
-	void dump(std::string_view dumpName, std::string_view extension, const std::function<std::string()>& dumpFunction) const;
+	void dump(std::string_view dumpName, std::string_view extension,
+	          const std::function<std::string()>& dumpFunction) const;
 	void forceDump(std::string_view dumpName, std::string_view extension, const std::string& content) const;
 
 private:
 	[[nodiscard]] bool shouldDump(std::string_view dumpName) const;
+	[[nodiscard]] bool shallCreateFolder() const;
 	[[nodiscard]] bool dumpToConsole() const;
 	[[nodiscard]] bool dumpToFile() const;
 	const engine::Options& options;

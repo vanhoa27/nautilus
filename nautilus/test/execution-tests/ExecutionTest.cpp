@@ -621,6 +621,12 @@ void functionCallExecutionTest(engine::NautilusEngine& engine) {
 		REQUIRE(f(1, 1) == 1);
 		REQUIRE(f(0, 1) == 0);
 	}
+	SECTION("loopDirectCall2") {
+		auto f = engine.registerFunction(loopDirectCall2);
+		REQUIRE(f(10) == 420);
+		REQUIRE(f(1) == 42);
+		REQUIRE(f(0) == 0);
+	}
 	SECTION("voidCall") {
 		auto f = engine.registerFunction(voidFuncCall);
 		REQUIRE_NOTHROW(f(10, 10));
@@ -945,6 +951,17 @@ void registerFunctionTest(engine::NautilusEngine& engine) {
 		auto f = engine.registerFunction(std::function([](val<int8_t*> arg) -> val<int8_t> { return *arg; }));
 		int8_t val = 42;
 		REQUIRE(f(&val) == 42);
+	}
+
+	SECTION("pureFunctionWithPtr2") {
+		auto f = engine.registerFunction(std::function([](val<int8_t**> arg) -> val<int8_t> {
+			val<int8_t*> deref1 = *arg;
+			return *deref1;
+		}));
+		int8_t val = 42;
+		int8_t* valPtr = &val;
+		int8_t** valPtrToPtr = &valPtr;
+		REQUIRE(f(valPtrToPtr) == 42);
 	}
 
 	SECTION("pureVoidFunctionWithPtr") {

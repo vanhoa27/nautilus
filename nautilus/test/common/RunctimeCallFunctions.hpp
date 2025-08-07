@@ -1,7 +1,7 @@
 #pragma once
 
-#include <nautilus/val_ptr.hpp>
 #include <nautilus/Engine.hpp>
+#include <nautilus/val_ptr.hpp>
 
 namespace nautilus {
 
@@ -75,6 +75,19 @@ val<int32_t> callTwoFunctions(val<int32_t> x, val<int32_t> y) {
 val<int32_t> loopDirectCall(val<int32_t> c, val<int32_t> x) {
 	val<int32_t> sum = 0;
 	for (val<int32_t> i = 0; i < c; i = i + 1) {
+		sum = invoke<>(add, sum, x);
+	}
+	return sum;
+}
+
+inline int32_t get42() {
+	return 42;
+}
+
+inline val<int32_t> loopDirectCall2(val<int32_t> x) {
+	val<int32_t> sum = 0;
+	val<int32_t> c = invoke(get42);
+	for (val<uint64_t> i = 0; i < c; i = i + 1) {
 		sum = invoke<>(add, sum, x);
 	}
 	return sum;

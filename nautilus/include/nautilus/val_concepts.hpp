@@ -14,33 +14,36 @@ template <typename T>
 class val;
 
 template <typename T>
-concept convertible_to_integral = (std::is_convertible_v<T, int> || std::is_convertible_v<T, char> || std::is_convertible_v<T, long> || std::is_convertible_v<T, short> || std::is_convertible_v<T, unsigned long> ||
-                                   std::is_convertible_v<T, unsigned int> || std::is_convertible_v<T, unsigned short> || std::is_convertible_v<T, long long> || std::is_convertible_v<T, unsigned long long>);
+concept convertible_to_integral =
+    (std::is_convertible_v<T, int> || std::is_convertible_v<T, char> || std::is_convertible_v<T, long> ||
+     std::is_convertible_v<T, short> || std::is_convertible_v<T, unsigned long> ||
+     std::is_convertible_v<T, unsigned int> || std::is_convertible_v<T, unsigned short> ||
+     std::is_convertible_v<T, long long> || std::is_convertible_v<T, unsigned long long>);
 
 template <typename T>
 concept is_fundamental_val = requires {
 	typename std::remove_reference_t<T>::basic_type; // Ensure T has a member type 'basic_type'
-	requires !std::is_enum_v<typename std::remove_reference_t<T>::basic_type> && std::is_fundamental_v<typename std::remove_reference_t<T>::basic_type>; // Ensure 'basic_type' is integral
+	requires !std::is_enum_v<typename std::remove_reference_t<T>::basic_type> &&
+	             std::is_fundamental_v<typename std::remove_reference_t<T>::basic_type>; // Ensure 'basic_type' is
+	                                                                                     // integral
 };
 
 template <typename T>
-concept convertible_to_fundamental = !std::is_enum_v<T> && !is_fundamental_val<T> && (convertible_to_integral<T> || std::is_convertible_v<T, float> || std::is_convertible_v<T, double> || std::is_convertible_v<T, bool>);
+concept convertible_to_fundamental = !std::is_enum_v<T> && !is_fundamental_val<T> &&
+                                     (convertible_to_integral<T> || std::is_convertible_v<T, float> ||
+                                      std::is_convertible_v<T, double> || std::is_convertible_v<T, bool>);
 
 template <typename T>
 concept is_arithmetic = std::is_arithmetic_v<T>;
 
-
-
 template <typename T>
 concept is_fundamental_convertable = std::is_fundamental_v<std::remove_cvref_t<T>> && !std::is_pointer_v<T>;
-
 
 template <typename T>
 concept is_integral_val = requires {
 	typename std::remove_reference_t<T>::basic_type; // Ensure T has a member type 'basic_type'
 	requires std::is_integral_v<typename std::remove_reference_t<T>::basic_type>; // Ensure 'basic_type' is integral
 };
-
 
 template <typename T>
 concept is_ptr = std::is_pointer_v<T>;
@@ -49,13 +52,20 @@ template <typename T>
 concept is_arithmetic_ptr = is_ptr<T> && std::is_arithmetic_v<std::remove_pointer_t<T>>;
 
 template <typename T>
+concept is_ptr_ref = is_ptr<std::remove_reference_t<T>> && std::is_reference_v<T>;
+
+template <typename T>
 concept is_arithmetic_ref = std::is_arithmetic_v<std::remove_reference_t<T>> && std::is_reference_v<T>;
+
+template <typename T>
+concept is_nautilus_ref = is_ptr_ref<T> || is_arithmetic_ref<T>;
 
 template <typename T>
 concept is_void_ptr = is_ptr<T> && std::is_void_v<std::remove_pointer_t<T>>;
 
 template <typename T>
-concept is_fundamental = std::is_fundamental_v<T> && !std::is_reference_v<T> && !std::is_pointer_v<T> && !std::is_same_v<T, bool>;
+concept is_fundamental =
+    std::is_fundamental_v<T> && !std::is_reference_v<T> && !std::is_pointer_v<T> && !std::is_same_v<T, bool>;
 
 template <typename T>
 concept is_fundamental_ptr = std::is_arithmetic_v<std::remove_pointer_t<T>> && std::is_pointer_v<T>;
